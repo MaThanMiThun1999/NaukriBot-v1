@@ -1,0 +1,36 @@
+name: Run Naukri Auto Update BOT
+
+on:
+  schedule:
+    - cron: '00 04 * * *'
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Puppeteer dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3 libatk-bridge2.0-0 libx11-xcb1 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libasound2 libpangocairo-1.0-0 libgtk-3-0
+
+      - name: Run the Naukri Auto Update BOT
+        run: |
+          export BOT_EMAILID="${{ secrets.BOT_EMAILID }}"
+          export BOT_MAIL_PASSWORD="${{ secrets.BOT_MAIL_PASSWORD }}"
+          export RECEIVING_EMAILID="${{ secrets.RECEIVING_EMAILID }}"
+          export NAUKRI_EMAILID="${{ secrets.NAUKRI_EMAILID }}"
+          export NAUKRI_PASSWORD="${{ secrets.NAUKRI_PASSWORD }}"
+          
+          node index.js --no-sandbox --disable-setuid-sandbox
